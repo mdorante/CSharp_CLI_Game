@@ -15,7 +15,6 @@ namespace Game_Project.Lib
             {
                 Console.WriteLine("1. Start");
                 Console.WriteLine("2. See Instructions");
-                Console.WriteLine("2. See Instructions");
                 Console.WriteLine("3. Select Difficulty");
                 Console.WriteLine("4. See Last Game");
                 Console.WriteLine("5. Exit");
@@ -52,7 +51,7 @@ namespace Game_Project.Lib
                 Console.WriteLine("\nSelect an option:");
                 isNum = int.TryParse(Console.ReadLine(), out level);
 
-                if (level != 1 || level != 2)
+                if (level < 1 || level > 2)
                 {
                     Console.WriteLine("Invalid option.");
                     isNum = false;
