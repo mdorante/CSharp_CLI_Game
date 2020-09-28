@@ -9,10 +9,10 @@ namespace Game_Project.Lib
             int option = 0;
             bool isNum = false;
 
-            Console.Clear();
-
             while (!isNum)
             {
+                Console.Clear();
+
                 Console.WriteLine("1. Start");
                 Console.WriteLine("2. See Instructions");
                 Console.WriteLine("3. Select Difficulty");
@@ -26,8 +26,15 @@ namespace Game_Project.Lib
 
                 if (option <= 0 || option > 5)
                 {
-                    Console.WriteLine("\nInvalid option.");
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid option.");
+                    Console.ResetColor();
+
                     isNum = false;
+
+                    Console.WriteLine("\nPress Enter to return");
+                    Console.ReadLine();
                 }
             }
 
@@ -40,21 +47,32 @@ namespace Game_Project.Lib
             bool isNum = false;
             int level = 0;
 
-            Console.Clear();
-            Console.WriteLine("Difficulty Levels:");
-            Console.WriteLine("1. Easy");
-            Console.WriteLine("2. Hard");
-
-
             while (!isNum)
             {
+                Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Difficulty Levels:");
+                Console.WriteLine("------------------");
+                Console.ResetColor();
+
+                Console.WriteLine("\n1. Easy");
+                Console.WriteLine("2. Hard");
+
                 Console.WriteLine("\nSelect an option:");
                 isNum = int.TryParse(Console.ReadLine(), out level);
 
                 if (level < 1 || level > 2)
                 {
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid option.");
+                    Console.ResetColor();
+
                     isNum = false;
+
+                    Console.WriteLine("\nPress Enter to return");
+                    Console.ReadLine();
                 }
             }
 
@@ -69,5 +87,29 @@ namespace Game_Project.Lib
 
             return difficulty;
         }
+
+        public static void ShowInstructions()
+        {
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Instructions:");
+            Console.WriteLine("-------------");
+
+            Console.ResetColor();
+
+            Console.WriteLine("\nThe game consists in trying to convert an all 0's grid into all 1's.");
+            Console.WriteLine("In order to do this, you have to select a coordinate (x, y),");
+            Console.WriteLine("this will switch the element at that coordinate and all adjacent elements (up, down, left and right).");
+            Console.WriteLine("By switch I mean, if the element is a 0, it will turn into a 1 or vice versa.");
+
+            Console.WriteLine("\nYou also have two extra commands:");
+            Console.WriteLine("- Save");
+            Console.WriteLine("- Load");
+
+            Console.WriteLine("\nPress Enter to return");
+            Console.ReadLine();
+        }
     }
+
 }

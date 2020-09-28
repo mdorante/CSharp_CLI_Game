@@ -12,11 +12,14 @@ namespace Game_Project
 
             int option = 0;
 
-            while (option != 1)
+            while (option != 5)
             {
                 option = MenuNavigation.DisplayMenu(difficulty);
                 switch (option)
                 {
+                    case 2:
+                        MenuNavigation.ShowInstructions();
+                        break;
                     case 3:
                         difficulty = MenuNavigation.SetDifficulty();
                         break;
