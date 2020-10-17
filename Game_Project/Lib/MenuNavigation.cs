@@ -4,6 +4,29 @@ namespace Game_Project.Lib
 {
     public class MenuNavigation
     {
+        private static void ShowError(string message)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
+        private static bool IsValidOption(int minValue, int maxValue, int option)
+        {
+            if (option < minValue || option > maxValue)
+            {
+                ShowError("Invalid option.");
+                Console.WriteLine("\nPress Enter to return");
+                Console.ReadLine();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static int DisplayMenu(string difficulty)
         {
             int option = 0;
@@ -24,18 +47,7 @@ namespace Game_Project.Lib
                 Console.WriteLine("\nSelect an option:");
                 isNum = int.TryParse(Console.ReadLine(), out option);
 
-                if (option <= 0 || option > 5)
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid option.");
-                    Console.ResetColor();
-
-                    isNum = false;
-
-                    Console.WriteLine("\nPress Enter to return");
-                    Console.ReadLine();
-                }
+                isNum = IsValidOption(1, 5, option);
             }
 
             return option;
@@ -62,18 +74,7 @@ namespace Game_Project.Lib
                 Console.WriteLine("\nSelect an option:");
                 isNum = int.TryParse(Console.ReadLine(), out level);
 
-                if (level < 1 || level > 2)
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid option.");
-                    Console.ResetColor();
-
-                    isNum = false;
-
-                    Console.WriteLine("\nPress Enter to return");
-                    Console.ReadLine();
-                }
+                isNum = IsValidOption(1, 2, level);
             }
 
             if (level == 1)

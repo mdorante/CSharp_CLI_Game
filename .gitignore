@@ -1,3 +1,6 @@
+# VS Code subfolders
+*.vscode/
+
 # globs
 Makefile.in
 *.userprefs
