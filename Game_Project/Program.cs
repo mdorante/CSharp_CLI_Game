@@ -19,11 +19,8 @@ namespace Game_Project
                 switch (option)
                 {
                     case 1:
-                        while (turns > 0)
-                        {
-                            Game.PlayGame(difficulty, turns);
-                            turns--;
-                        }
+                        Game.PlayGame(difficulty, ref turns);
+                        Environment.Exit(0);
                         break;
                     case 2:
                         MenuNavigation.ShowInstructions();
@@ -32,6 +29,8 @@ namespace Game_Project
                         difficulty = MenuNavigation.SetDifficulty();
                         if (difficulty == "Hard")
                             turns = 5;
+                        else
+                            turns = 10;
                         break;
                     case 5:
                         Console.WriteLine("Exit");
