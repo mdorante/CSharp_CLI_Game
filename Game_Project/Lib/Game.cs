@@ -8,17 +8,17 @@ namespace Game_Project.Lib
         public static void PlayGame(string difficulty, ref int turns)
         {
             int[,] grid = CreateGrid(difficulty);
+            int[,] savedGrid = null;
+
             bool winner = false;
             int turnsPlayed = 0;
             int initialTurns = turns;
 
             while (turns > 0 && !winner)
             {
-                DisplayGrid(grid);
+                DisplayGrid(grid, ref turns);
 
-                Console.WriteLine($"\nTurns remaining: {turns}");
-
-                UpdateGrid(grid, ref turns, ref turnsPlayed, ref initialTurns);
+                UpdateGrid(grid, ref savedGrid, ref turns, ref turnsPlayed, ref initialTurns);
                 winner = AmIAWinner(grid);
             }
 
@@ -59,7 +59,7 @@ namespace Game_Project.Lib
             return grid;
         }
 
-        private static void DisplayGrid(int[,] grid)
+        private static void DisplayGrid(int[,] grid, ref int turns)
         {
             Console.Clear();
 
@@ -74,11 +74,13 @@ namespace Game_Project.Lib
                 }
                 Console.WriteLine();
             }
+
+            Console.WriteLine($"\nTurns remaining: {turns}");
         }
 
-        private static void UpdateGrid(int[,] grid, ref int turns, ref int turnsPlayed, ref int initialTurns)
+        private static void UpdateGrid(int[,] grid, ref int[,] savedGrid, ref int turns, ref int turnsPlayed, ref int initialTurns)
         {
-            int[] nums = ReadCoordinate(grid);
+            int[] nums = ReadCoordinate(grid, ref savedGrid, ref turns);
             int x = nums[0];
             int y = nums[1];
 
@@ -109,7 +111,7 @@ namespace Game_Project.Lib
             turns--;
         }
 
-        private static int[] ReadCoordinate(int[,] grid)
+        private static int[] ReadCoordinate(int[,] grid, ref int[,] savedGrid, ref int turns)
         {
             int num1 = 0;
             int num2 = 0;
@@ -133,7 +135,7 @@ namespace Game_Project.Lib
                     if (inputNums.Length != 2)
                     {
                         MenuNavigation.ShowError("Incorrect format, you must specify 2 coordinates (x and y).");
-                        DisplayGrid(grid);
+                        DisplayGrid(grid, ref turns);
                         continue;
                     }
 
@@ -142,10 +144,34 @@ namespace Game_Project.Lib
                         coordinates.Add(inputNums[i].Trim());
                     }
                 }
+                else if (userInput == "Save")
+                {
+                    savedGrid = grid;
+                    History.LogEvent("Player saved the game.");
+                    turns--;
+                    DisplayGrid(grid, ref turns);
+                    continue;
+                }
+                else if (userInput == "Load")
+                {
+                    if (savedGrid != null)
+                    {
+                        grid = savedGrid;
+                        History.LogEvent("Player loaded a saved game");
+                        turns--;
+                        DisplayGrid(grid, ref turns);
+                    }
+                    else
+                    {
+                        turns--;
+                        MenuNavigation.ShowError("No saved game to load.");
+                    }
+                    continue;
+                }
                 else
                 {
                     MenuNavigation.ShowError("Invalid coordinates.");
-                    DisplayGrid(grid);
+                    DisplayGrid(grid, ref turns);
                     continue;
                 }
 
@@ -163,7 +189,7 @@ namespace Game_Project.Lib
                 {
                     MenuNavigation.ShowError("Invalid coordinates.");
                 }
-                DisplayGrid(grid);
+                DisplayGrid(grid, ref turns);
             }
 
             int[] nums = { num1, num2 };
