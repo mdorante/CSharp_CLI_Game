@@ -41,7 +41,7 @@ namespace Game_Project.Lib
                 Console.WriteLine("1. Start");
                 Console.WriteLine("2. See Instructions");
                 Console.WriteLine("3. Select Difficulty");
-                Console.WriteLine("4. See Last Game");
+                Console.WriteLine("4. See History");
                 Console.WriteLine("5. Exit");
 
                 Console.WriteLine($"\nCurrent Difficulty Level: {difficulty}");
@@ -91,6 +91,8 @@ namespace Game_Project.Lib
                 difficulty = "Hard";
             }
 
+            History.LogEvent($"Player changed the difficulty to {difficulty}.");
+
             return difficulty;
         }
 
@@ -112,6 +114,8 @@ namespace Game_Project.Lib
             Console.WriteLine("\nYou also have two extra commands:");
             Console.WriteLine("- Save");
             Console.WriteLine("- Load");
+
+            History.LogEvent("Player viewed instructions.");
 
             Console.WriteLine("\nPress Enter to return");
             Console.ReadLine();

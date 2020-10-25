@@ -10,6 +10,7 @@ namespace Game_Project.Lib
             int[,] grid = CreateGrid(difficulty);
             bool winner = false;
             int turnsPlayed = 0;
+            int initialTurns = turns;
 
             while (turns > 0 && !winner)
             {
@@ -17,25 +18,31 @@ namespace Game_Project.Lib
 
                 Console.WriteLine($"\nTurns remaining: {turns}");
 
-                UpdateGrid(grid, ref turns, ref turnsPlayed);
+                UpdateGrid(grid, ref turns, ref turnsPlayed, ref initialTurns);
                 winner = AmIAWinner(grid);
             }
 
             if (!winner)
+            {
+                History.LogEvent($"Player lost the game in {turnsPlayed} turns.");
                 MenuNavigation.ShowError("Out of turns.\nGame Over.");
+            }
             else
             {
+                History.LogEvent($"Player won the game in {turnsPlayed} turns!");
+
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Congratulations!");
-                Console.WriteLine("----------------");
+                Console.WriteLine("You win, congratulations!");
+                Console.WriteLine("-------------------------");
 
                 Console.ResetColor();
-                Console.WriteLine($"\nYou won the game in {turnsPlayed} turns!");
-
                 Console.WriteLine("\nPress Enter to return to the main menu.");
                 Console.ReadLine();
             }
+
+            // reset turns after game is over
+            turns = initialTurns;
         }
 
         private static int[,] CreateGrid(string difficulty)
@@ -69,11 +76,13 @@ namespace Game_Project.Lib
             }
         }
 
-        private static void UpdateGrid(int[,] grid, ref int turns, ref int turnsPlayed)
+        private static void UpdateGrid(int[,] grid, ref int turns, ref int turnsPlayed, ref int initialTurns)
         {
             int[] nums = ReadCoordinate(grid);
             int x = nums[0];
             int y = nums[1];
+
+            History.LogEvent($"Turn {++turnsPlayed} of {initialTurns} - Player entered: {x--},{y--}");
 
             int gridRows = grid.GetLength(0);
             int gridColumns = grid.GetLength(1);
@@ -98,7 +107,6 @@ namespace Game_Project.Lib
                 SwitchValue(ref grid[x, y + 1]);
 
             turns--;
-            turnsPlayed++;
         }
 
         private static int[] ReadCoordinate(int[,] grid)
@@ -158,7 +166,7 @@ namespace Game_Project.Lib
                 DisplayGrid(grid);
             }
 
-            int[] nums = { num1 - 1, num2 - 1 };
+            int[] nums = { num1, num2 };
 
             return nums;
         }
