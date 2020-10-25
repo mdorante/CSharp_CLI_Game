@@ -32,6 +32,9 @@ namespace Game_Project.Lib
 
                 Console.ResetColor();
                 Console.WriteLine($"\nYou won the game in {turnsPlayed} turns!");
+
+                Console.WriteLine("\nPress Enter to return to the main menu.");
+                Console.ReadLine();
             }
         }
 

@@ -77,7 +77,7 @@ namespace Game_Project.Lib
                 Console.WriteLine("2. Hard");
 
                 Console.WriteLine("\nSelect an option:");
-                isNum = int.TryParse(Console.ReadLine(), out level);
+                int.TryParse(Console.ReadLine(), out level);
 
                 isNum = IsValidOption(1, 2, level, "Invalid option.");
             }

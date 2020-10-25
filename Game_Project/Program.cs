@@ -20,7 +20,6 @@ namespace Game_Project
                 {
                     case 1:
                         Game.PlayGame(difficulty, ref turns);
-                        Environment.Exit(0);
                         break;
                     case 2:
                         MenuNavigation.ShowInstructions();
@@ -34,7 +33,6 @@ namespace Game_Project
                         break;
                     case 5:
                         Console.WriteLine("Exit");
-                        Environment.Exit(0);
                         break;
                 }
             }
