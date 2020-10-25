@@ -4,21 +4,22 @@ namespace Game_Project.Lib
 {
     public class MenuNavigation
     {
-        private static void ShowError(string message)
+        public static void ShowError(string message)
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
             Console.ResetColor();
+
+            Console.WriteLine("\nPress Enter to return");
+            Console.ReadLine();
         }
 
-        private static bool IsValidOption(int minValue, int maxValue, int option)
+        public static bool IsValidOption(int minValue, int maxValue, int option, string message)
         {
             if (option < minValue || option > maxValue)
             {
-                ShowError("Invalid option.");
-                Console.WriteLine("\nPress Enter to return");
-                Console.ReadLine();
+                ShowError(message);
                 return false;
             }
             else
@@ -31,8 +32,9 @@ namespace Game_Project.Lib
         {
             int option = 0;
             bool isNum = false;
+            bool validOption = false;
 
-            while (!isNum)
+            while (!isNum || !validOption)
             {
                 Console.Clear();
 
@@ -47,7 +49,10 @@ namespace Game_Project.Lib
                 Console.WriteLine("\nSelect an option:");
                 isNum = int.TryParse(Console.ReadLine(), out option);
 
-                isNum = IsValidOption(1, 5, option);
+                if (isNum)
+                    validOption = IsValidOption(1, 5, option, "Invalid option");
+                else
+                    ShowError("Invalid option.");
             }
 
             return option;
@@ -72,9 +77,9 @@ namespace Game_Project.Lib
                 Console.WriteLine("2. Hard");
 
                 Console.WriteLine("\nSelect an option:");
-                isNum = int.TryParse(Console.ReadLine(), out level);
+                int.TryParse(Console.ReadLine(), out level);
 
-                isNum = IsValidOption(1, 2, level);
+                isNum = IsValidOption(1, 2, level, "Invalid option.");
             }
 
             if (level == 1)
