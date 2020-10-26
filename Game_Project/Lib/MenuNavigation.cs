@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Game_Project.Lib
 {
@@ -28,70 +29,89 @@ namespace Game_Project.Lib
             }
         }
 
-        public static int DisplayMenu(string difficulty)
+        public static int ValidateOption(List<string> menuOptions, int minValue, int maxValue)
         {
-            int option = 0;
-            bool isNum = false;
+            int maxAttempts = 3;
+            int failedAttempts = 0;
+
             bool validOption = false;
+            bool isNum = false;
 
-            while (!isNum || !validOption)
+            int option = 0;
+
+            while (!validOption || !isNum)
             {
+                if (failedAttempts == maxAttempts)
+                {
+                    ShowMessage("You ran out of attempts, exiting the game.", ConsoleColor.Red);
+                    History.LogEvent("Player ran out of attempts to select a valid option.");
+                    return 0;
+                }
+
                 Console.Clear();
+                for (int i = 0; i < menuOptions.Count; i++)
+                {
+                    Console.WriteLine(menuOptions[i]);
+                }
 
-                Console.WriteLine("1. Start");
-                Console.WriteLine("2. See Instructions");
-                Console.WriteLine("3. Select Difficulty");
-                Console.WriteLine("4. See History");
-                Console.WriteLine("5. Exit");
-
-                Console.WriteLine($"\nCurrent Difficulty Level: {difficulty}");
-
-                Console.WriteLine("\nSelect an option:");
                 isNum = int.TryParse(Console.ReadLine(), out option);
 
                 if (isNum)
-                    validOption = IsValidOption(1, 5, option, "Invalid option");
+                {
+                    validOption = IsValidOption(minValue, maxValue, option, $"Invalid option.\nYou have {maxAttempts - ++failedAttempts} attempts left.");
+                }
                 else
-                    ShowMessage("Invalid option.", ConsoleColor.Red);
+                {
+                    ShowMessage($"Invalid option.\nYou have {maxAttempts - ++failedAttempts} attempts left.", ConsoleColor.Red);
+                }
             }
+
+            return option;
+        }
+
+        public static int DisplayMenu(string difficulty)
+        {
+            List<string> optionsMenu = new List<string>();
+
+            optionsMenu.Add("1. Start");
+            optionsMenu.Add("2. See Instructions");
+            optionsMenu.Add("3. Select Difficulty");
+            optionsMenu.Add("4. See History");
+            optionsMenu.Add("5. Exit");
+            optionsMenu.Add($"\nCurrent Difficulty Level: {difficulty}");
+            optionsMenu.Add("\nSelect an option:");
+
+            int option = ValidateOption(optionsMenu, 1, 5);
+
+            // player ran out of attempts to select a valid option
+            if (option == 0)
+                option = 5;
 
             return option;
         }
 
         public static string SetDifficulty()
         {
-            string difficulty = string.Empty;
-            bool isNum = false;
-            int level = 0;
+            string difficulty;
+            List<string> optionsMenu = new List<string>();
 
-            while (!isNum)
-            {
-                Console.Clear();
+            optionsMenu.Add("Difficulty Levels:");
+            optionsMenu.Add("------------------");
+            optionsMenu.Add("\n1. Easy");
+            optionsMenu.Add("2. Hard");
+            optionsMenu.Add("\nSelect an option:");
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Difficulty Levels:");
-                Console.WriteLine("------------------");
-                Console.ResetColor();
+            int option = ValidateOption(optionsMenu, 1, 2);
 
-                Console.WriteLine("\n1. Easy");
-                Console.WriteLine("2. Hard");
-
-                Console.WriteLine("\nSelect an option:");
-                int.TryParse(Console.ReadLine(), out level);
-
-                isNum = IsValidOption(1, 2, level, "Invalid option.");
-            }
-
-            if (level == 1)
-            {
+            if (option == 1)
                 difficulty = "Easy";
-            }
-            else if (level == 2)
-            {
+            else if (option == 2)
                 difficulty = "Hard";
-            }
+            else
+                difficulty = null;
 
-            History.LogEvent($"Player changed the difficulty to {difficulty}.");
+            if (difficulty != null)
+                History.LogEvent($"Player changed the difficulty to {difficulty}.");
 
             return difficulty;
         }
@@ -121,5 +141,4 @@ namespace Game_Project.Lib
             Console.ReadLine();
         }
     }
-
 }
