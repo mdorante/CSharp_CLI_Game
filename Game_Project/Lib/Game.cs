@@ -8,7 +8,7 @@ namespace Game_Project.Lib
         public static void PlayGame(string difficulty, ref int turns)
         {
             int[,] grid = CreateGrid(difficulty);
-            int[,] savedGrid = null;
+            int[,] savedGrid = CreateGrid(difficulty);
 
             bool winner = false;
             int turnsPlayed = 0;
@@ -19,26 +19,21 @@ namespace Game_Project.Lib
                 DisplayGrid(grid, ref turns);
 
                 UpdateGrid(grid, ref savedGrid, ref turns, ref turnsPlayed, ref initialTurns);
-                winner = AmIAWinner(grid);
+                winner = SearchGrid(grid, 0);
             }
+
+            DisplayGrid(grid, ref turns);
+            Console.ReadLine();
 
             if (!winner)
             {
                 History.LogEvent($"Player lost the game in {turnsPlayed} turns.");
-                MenuNavigation.ShowError("Out of turns.\nGame Over.");
+                MenuNavigation.ShowMessage("Out of turns.\nGame Over.", ConsoleColor.Red);
             }
             else
             {
                 History.LogEvent($"Player won the game in {turnsPlayed} turns!");
-
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("You win, congratulations!");
-                Console.WriteLine("-------------------------");
-
-                Console.ResetColor();
-                Console.WriteLine("\nPress Enter to return to the main menu.");
-                Console.ReadLine();
+                MenuNavigation.ShowMessage("You win, congratulations!\n-------------------------", ConsoleColor.Green);
             }
 
             // reset turns after game is over
@@ -134,7 +129,7 @@ namespace Game_Project.Lib
 
                     if (inputNums.Length != 2)
                     {
-                        MenuNavigation.ShowError("Incorrect format, you must specify 2 coordinates (x and y).");
+                        MenuNavigation.ShowMessage("Incorrect format, you must specify 2 coordinates (x and y).", ConsoleColor.Red);
                         DisplayGrid(grid, ref turns);
                         continue;
                     }
@@ -146,7 +141,7 @@ namespace Game_Project.Lib
                 }
                 else if (userInput == "Save")
                 {
-                    savedGrid = grid;
+                    Array.Copy(grid, savedGrid, grid.Length);
                     History.LogEvent("Player saved the game.");
                     turns--;
                     DisplayGrid(grid, ref turns);
@@ -154,23 +149,23 @@ namespace Game_Project.Lib
                 }
                 else if (userInput == "Load")
                 {
-                    if (savedGrid != null)
+                    if (!SearchGrid(savedGrid, 1))
                     {
-                        grid = savedGrid;
-                        History.LogEvent("Player loaded a saved game");
-                        turns--;
-                        DisplayGrid(grid, ref turns);
+                        Array.Copy(savedGrid, grid, savedGrid.Length);
+                        History.LogEvent("Player loaded a saved game.");
                     }
                     else
                     {
-                        turns--;
-                        MenuNavigation.ShowError("No saved game to load.");
+                        MenuNavigation.ShowMessage("No saved game to load.", ConsoleColor.Red);
                     }
+
+                    turns--;
+                    DisplayGrid(grid, ref turns);
                     continue;
                 }
                 else
                 {
-                    MenuNavigation.ShowError("Invalid coordinates.");
+                    MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
                     DisplayGrid(grid, ref turns);
                     continue;
                 }
@@ -187,7 +182,7 @@ namespace Game_Project.Lib
                 }
                 else
                 {
-                    MenuNavigation.ShowError("Invalid coordinates.");
+                    MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
                 }
                 DisplayGrid(grid, ref turns);
             }
@@ -205,7 +200,7 @@ namespace Game_Project.Lib
                 num = 0;
         }
 
-        private static bool AmIAWinner(int[,] grid)
+        private static bool SearchGrid(int[,] grid, int num)
         {
             int gridRows = grid.GetLength(0);
             int gridColumns = grid.GetLength(1);
@@ -214,7 +209,7 @@ namespace Game_Project.Lib
             {
                 for (int j = 0; j < gridColumns; j++)
                 {
-                    if (grid[i, j] == 0)
+                    if (grid[i, j] == num)
                     {
                         return false;
                     }

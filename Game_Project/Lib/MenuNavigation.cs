@@ -4,10 +4,10 @@ namespace Game_Project.Lib
 {
     public class MenuNavigation
     {
-        public static void ShowError(string message)
+        public static void ShowMessage(string message, ConsoleColor color)
         {
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = color;
             Console.WriteLine(message);
             Console.ResetColor();
 
@@ -19,7 +19,7 @@ namespace Game_Project.Lib
         {
             if (option < minValue || option > maxValue)
             {
-                ShowError(message);
+                ShowMessage(message, ConsoleColor.Red);
                 return false;
             }
             else
@@ -52,7 +52,7 @@ namespace Game_Project.Lib
                 if (isNum)
                     validOption = IsValidOption(1, 5, option, "Invalid option");
                 else
-                    ShowError("Invalid option.");
+                    ShowMessage("Invalid option.", ConsoleColor.Red);
             }
 
             return option;
