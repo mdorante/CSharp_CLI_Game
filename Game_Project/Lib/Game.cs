@@ -76,6 +76,11 @@ namespace Game_Project.Lib
         private static void UpdateGrid(int[,] grid, ref int[,] savedGrid, ref int turns, ref int turnsPlayed, ref int initialTurns)
         {
             int[] nums = ReadCoordinate(grid, ref savedGrid, ref turns);
+
+            // if the player saved or loaded, don't update the grid
+            if (nums == null)
+                return;
+
             int x = nums[0];
             int y = nums[1];
 
@@ -102,8 +107,6 @@ namespace Game_Project.Lib
             // Switch right coord
             if (y < gridColumns - 1)
                 SwitchValue(ref grid[x, y + 1]);
-
-            turns--;
         }
 
         private static int[] ReadCoordinate(int[,] grid, ref int[,] savedGrid, ref int turns)
@@ -116,8 +119,12 @@ namespace Game_Project.Lib
             bool validRow = false;
             bool validColumn = false;
 
+            bool saveLoadExit = false;
+
             while (!validRow || !validColumn)
             {
+                DisplayGrid(grid, ref turns);
+
                 Console.WriteLine("Enter the coordinates using the following format: x,y");
                 string userInput = Console.ReadLine();
 
@@ -138,14 +145,30 @@ namespace Game_Project.Lib
                     {
                         coordinates.Add(inputNums[i].Trim());
                     }
+
+                    bool validNum1 = int.TryParse(coordinates[0], out num1);
+                    bool validNum2 = int.TryParse(coordinates[1], out num2);
+
+                    if (validNum1 && validNum2)
+                    {
+                        validRow = MenuNavigation.IsValidOption(1, gridRows, num1, "Row out of range");
+
+                        if (validRow)
+                            validColumn = MenuNavigation.IsValidOption(1, gridColumns, num2, "Column out of range");
+                    }
+                    else
+                    {
+                        MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
+                    }
                 }
                 else if (userInput == "Save")
                 {
                     Array.Copy(grid, savedGrid, grid.Length);
                     History.LogEvent("Player saved the game.");
+
+                    saveLoadExit = true;
                     turns--;
-                    DisplayGrid(grid, ref turns);
-                    continue;
+                    break;
                 }
                 else if (userInput == "Load")
                 {
@@ -159,37 +182,27 @@ namespace Game_Project.Lib
                         MenuNavigation.ShowMessage("No saved game to load.", ConsoleColor.Red);
                     }
 
+                    saveLoadExit = true;
                     turns--;
-                    DisplayGrid(grid, ref turns);
-                    continue;
+                    break;
                 }
                 else
                 {
-                    MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
+                    MenuNavigation.ShowMessage("Invalid input.", ConsoleColor.Red);
                     DisplayGrid(grid, ref turns);
                     continue;
                 }
 
-                bool validNum1 = int.TryParse(coordinates[0], out num1);
-                bool validNum2 = int.TryParse(coordinates[1], out num2);
-
-                if (validNum1 && validNum2)
-                {
-                    validRow = MenuNavigation.IsValidOption(1, gridRows, num1, "Row out of range");
-
-                    if (validRow)
-                        validColumn = MenuNavigation.IsValidOption(1, gridColumns, num2, "Column out of range");
-                }
-                else
-                {
-                    MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
-                }
-                DisplayGrid(grid, ref turns);
+                turns--;
             }
 
-            int[] nums = { num1, num2 };
+            if (!saveLoadExit)
+            {
+                int[] nums = { num1, num2 };
+                return nums;
+            }
 
-            return nums;
+            return null;
         }
 
         private static void SwitchValue(ref int num)
