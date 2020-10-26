@@ -8,34 +8,36 @@ namespace Game_Project.Lib
         public static void PlayGame(string difficulty, ref int turns)
         {
             int[,] grid = CreateGrid(difficulty);
+            int[,] savedGrid = CreateGrid(difficulty);
+
             bool winner = false;
             int turnsPlayed = 0;
+            int initialTurns = turns;
 
             while (turns > 0 && !winner)
             {
-                DisplayGrid(grid);
+                DisplayGrid(grid, ref turns);
 
-                Console.WriteLine($"\nTurns remaining: {turns}");
-
-                UpdateGrid(grid, ref turns, ref turnsPlayed);
-                winner = AmIAWinner(grid);
+                UpdateGrid(grid, ref savedGrid, ref turns, ref turnsPlayed, ref initialTurns);
+                winner = SearchGrid(grid, 0);
             }
+
+            DisplayGrid(grid, ref turns);
+            Console.ReadLine();
 
             if (!winner)
-                MenuNavigation.ShowError("Out of turns.\nGame Over.");
+            {
+                History.LogEvent($"Player lost the game in {turnsPlayed} turns.");
+                MenuNavigation.ShowMessage("Out of turns.\nGame Over.", ConsoleColor.Red);
+            }
             else
             {
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Congratulations!");
-                Console.WriteLine("----------------");
-
-                Console.ResetColor();
-                Console.WriteLine($"\nYou won the game in {turnsPlayed} turns!");
-
-                Console.WriteLine("\nPress Enter to return to the main menu.");
-                Console.ReadLine();
+                History.LogEvent($"Player won the game in {turnsPlayed} turns!");
+                MenuNavigation.ShowMessage("You win, congratulations!\n-------------------------", ConsoleColor.Green);
             }
+
+            // reset turns after game is over
+            turns = initialTurns;
         }
 
         private static int[,] CreateGrid(string difficulty)
@@ -52,7 +54,7 @@ namespace Game_Project.Lib
             return grid;
         }
 
-        private static void DisplayGrid(int[,] grid)
+        private static void DisplayGrid(int[,] grid, ref int turns)
         {
             Console.Clear();
 
@@ -67,13 +69,17 @@ namespace Game_Project.Lib
                 }
                 Console.WriteLine();
             }
+
+            Console.WriteLine($"\nTurns remaining: {turns}");
         }
 
-        private static void UpdateGrid(int[,] grid, ref int turns, ref int turnsPlayed)
+        private static void UpdateGrid(int[,] grid, ref int[,] savedGrid, ref int turns, ref int turnsPlayed, ref int initialTurns)
         {
-            int[] nums = ReadCoordinate(grid);
+            int[] nums = ReadCoordinate(grid, ref savedGrid, ref turns);
             int x = nums[0];
             int y = nums[1];
+
+            History.LogEvent($"Turn {++turnsPlayed} of {initialTurns} - Player entered: {x--},{y--}");
 
             int gridRows = grid.GetLength(0);
             int gridColumns = grid.GetLength(1);
@@ -98,10 +104,9 @@ namespace Game_Project.Lib
                 SwitchValue(ref grid[x, y + 1]);
 
             turns--;
-            turnsPlayed++;
         }
 
-        private static int[] ReadCoordinate(int[,] grid)
+        private static int[] ReadCoordinate(int[,] grid, ref int[,] savedGrid, ref int turns)
         {
             int num1 = 0;
             int num2 = 0;
@@ -124,8 +129,8 @@ namespace Game_Project.Lib
 
                     if (inputNums.Length != 2)
                     {
-                        MenuNavigation.ShowError("Incorrect format, you must specify 2 coordinates (x and y).");
-                        DisplayGrid(grid);
+                        MenuNavigation.ShowMessage("Incorrect format, you must specify 2 coordinates (x and y).", ConsoleColor.Red);
+                        DisplayGrid(grid, ref turns);
                         continue;
                     }
 
@@ -134,10 +139,34 @@ namespace Game_Project.Lib
                         coordinates.Add(inputNums[i].Trim());
                     }
                 }
+                else if (userInput == "Save")
+                {
+                    Array.Copy(grid, savedGrid, grid.Length);
+                    History.LogEvent("Player saved the game.");
+                    turns--;
+                    DisplayGrid(grid, ref turns);
+                    continue;
+                }
+                else if (userInput == "Load")
+                {
+                    if (!SearchGrid(savedGrid, 1))
+                    {
+                        Array.Copy(savedGrid, grid, savedGrid.Length);
+                        History.LogEvent("Player loaded a saved game.");
+                    }
+                    else
+                    {
+                        MenuNavigation.ShowMessage("No saved game to load.", ConsoleColor.Red);
+                    }
+
+                    turns--;
+                    DisplayGrid(grid, ref turns);
+                    continue;
+                }
                 else
                 {
-                    MenuNavigation.ShowError("Invalid coordinates.");
-                    DisplayGrid(grid);
+                    MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
+                    DisplayGrid(grid, ref turns);
                     continue;
                 }
 
@@ -153,12 +182,12 @@ namespace Game_Project.Lib
                 }
                 else
                 {
-                    MenuNavigation.ShowError("Invalid coordinates.");
+                    MenuNavigation.ShowMessage("Invalid coordinates.", ConsoleColor.Red);
                 }
-                DisplayGrid(grid);
+                DisplayGrid(grid, ref turns);
             }
 
-            int[] nums = { num1 - 1, num2 - 1 };
+            int[] nums = { num1, num2 };
 
             return nums;
         }
@@ -171,7 +200,7 @@ namespace Game_Project.Lib
                 num = 0;
         }
 
-        private static bool AmIAWinner(int[,] grid)
+        private static bool SearchGrid(int[,] grid, int num)
         {
             int gridRows = grid.GetLength(0);
             int gridColumns = grid.GetLength(1);
@@ -180,7 +209,7 @@ namespace Game_Project.Lib
             {
                 for (int j = 0; j < gridColumns; j++)
                 {
-                    if (grid[i, j] == 0)
+                    if (grid[i, j] == num)
                     {
                         return false;
                     }

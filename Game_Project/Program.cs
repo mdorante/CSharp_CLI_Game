@@ -12,6 +12,8 @@ namespace Game_Project
             int turns = 10;
             int option = 0;
 
+            History.LogEvent("Player entered the game");
+
             while (option != 5)
             {
                 option = MenuNavigation.DisplayMenu(difficulty);
@@ -19,6 +21,7 @@ namespace Game_Project
                 switch (option)
                 {
                     case 1:
+                        History.LogEvent("Player started a new game.");
                         Game.PlayGame(difficulty, ref turns);
                         break;
                     case 2:
@@ -31,8 +34,12 @@ namespace Game_Project
                         else
                             turns = 10;
                         break;
+                    case 4:
+                        History.ReadLog();
+                        break;
                     case 5:
                         Console.WriteLine("Exit");
+                        History.LogEvent("Player exited the game.");
                         break;
                 }
             }

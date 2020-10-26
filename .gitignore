@@ -1,6 +1,9 @@
 # VS Code subfolders
 *.vscode/
 
+# game history log
+Game_Project/history.log
+
 # globs
 Makefile.in
 *.userprefs
