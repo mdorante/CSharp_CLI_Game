@@ -75,7 +75,7 @@ namespace Game_Project.Lib
 
         private static void UpdateGrid(int[,] grid, ref int[,] savedGrid, ref int turns, ref int turnsPlayed, ref int initialTurns)
         {
-            int[] nums = ReadCoordinate(grid, ref savedGrid, ref turns);
+            int[] nums = ReadCoordinate(grid, ref savedGrid, ref turns, ref turnsPlayed);
 
             // if the player saved or loaded, don't update the grid
             if (nums == null)
@@ -109,7 +109,7 @@ namespace Game_Project.Lib
                 SwitchValue(ref grid[x, y + 1]);
         }
 
-        private static int[] ReadCoordinate(int[,] grid, ref int[,] savedGrid, ref int turns)
+        private static int[] ReadCoordinate(int[,] grid, ref int[,] savedGrid, ref int turns, ref int turnsPlayed)
         {
             int num1 = 0;
             int num2 = 0;
@@ -168,6 +168,7 @@ namespace Game_Project.Lib
 
                     saveLoadExit = true;
                     turns--;
+                    turnsPlayed++;
                     break;
                 }
                 else if (userInput == "Load")
@@ -184,6 +185,7 @@ namespace Game_Project.Lib
 
                     saveLoadExit = true;
                     turns--;
+                    turnsPlayed++;
                     break;
                 }
                 else
@@ -196,13 +198,11 @@ namespace Game_Project.Lib
                 turns--;
             }
 
-            if (!saveLoadExit)
-            {
-                int[] nums = { num1, num2 };
-                return nums;
-            }
+            if (saveLoadExit)
+                return null;
 
-            return null;
+            int[] nums = { num1, num2 };
+            return nums;
         }
 
         private static void SwitchValue(ref int num)

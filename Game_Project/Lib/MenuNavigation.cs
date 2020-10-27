@@ -85,7 +85,7 @@ namespace Game_Project.Lib
 
             // player ran out of attempts to select a valid option
             if (option == 0)
-                option = 5;
+                return 5;
 
             return option;
         }

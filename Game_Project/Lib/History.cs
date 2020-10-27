@@ -7,15 +7,14 @@ namespace Game_Project.Lib
     {
         public static void LogEvent(string gameEvent)
         {
-            // set the log path at the project root
-            string logPath = "../../../history.log";
+            string logPath = "./logs/history.log";
 
             File.AppendAllText(logPath, DateTime.Now + " " + gameEvent + '\n');
         }
 
         public static void ReadLog()
         {
-            string path = "../../../history.log";
+            string path = "./logs/history.log";
 
             string[] contents = File.ReadAllLines(path);
 
