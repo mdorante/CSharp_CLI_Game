@@ -22,7 +22,7 @@ When you start the game, you will see a Main Menu with the following options:
 1. Start
 2. See Instructions
 3. Select Difficulty
-4. See Last Game
+4. See History
 5. Exit
 
 ## Difficulty Settings
