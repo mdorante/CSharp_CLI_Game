@@ -12,6 +12,7 @@ namespace Game_Project
             int turns = 10;
             int option = 0;
 
+            History.Initialize();
             History.LogEvent("Player entered the game");
 
             while (option != 5)
