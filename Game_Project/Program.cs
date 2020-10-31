@@ -12,6 +12,7 @@ namespace Game_Project
             int turns = 10;
             int option = 0;
 
+            History.Initialize();
             History.LogEvent("Player entered the game");
 
             while (option != 5)
@@ -31,8 +32,12 @@ namespace Game_Project
                         difficulty = MenuNavigation.SetDifficulty();
                         if (difficulty == "Hard")
                             turns = 5;
-                        else
+                        else if (difficulty == "Easy")
                             turns = 10;
+
+                        // player runs out of attempts to select difficulty
+                        else
+                            option = 5;
                         break;
                     case 4:
                         History.ReadLog();

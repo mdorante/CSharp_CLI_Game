@@ -1,6 +1,6 @@
 # CLI Game
 
-In this game you are given a grid, in order to win the game, you have to find the glitch in the matrix (not really, I just wanted it to sound cool lol).
+In this game you are given a grid, in order to win the game, you have to find the glitch in the matrix (not really, I just wanted it to sound cool).
 
 Now seriously, you are given an all **0**'s matrix and in order to win this game, you have to fill the grid up with **1**'s before you run out of turns. (Sounds easy, right?)
 
@@ -15,6 +15,8 @@ You also have two extra commands:
 - Save
 - Load
 
+***NOTE***: Saving and loading consumes turns too!
+
 ## Main Menu
 
 When you start the game, you will see a Main Menu with the following options:
@@ -22,7 +24,7 @@ When you start the game, you will see a Main Menu with the following options:
 1. Start
 2. See Instructions
 3. Select Difficulty
-4. See Last Game
+4. See History
 5. Exit
 
 ## Difficulty Settings

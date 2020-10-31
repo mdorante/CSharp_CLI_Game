@@ -1,24 +1,30 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Game_Project.Lib
 {
     public class History
     {
+        private static string basePath = "./logs";
+        private static string logPath = $"{basePath}/history.log";
+
+        public static void Initialize()
+        {
+            if (!Directory.Exists(basePath))
+                Directory.CreateDirectory(basePath);
+
+            if (!File.Exists(logPath))
+                File.WriteAllText(logPath, string.Empty);
+        }
+
         public static void LogEvent(string gameEvent)
         {
-            // set the log path at the project root
-            string logPath = "../../../history.log";
-
             File.AppendAllText(logPath, DateTime.Now + " " + gameEvent + '\n');
         }
 
         public static void ReadLog()
         {
-            string path = "../../../history.log";
-
-            string[] contents = File.ReadAllLines(path);
+            string[] contents = File.ReadAllLines(logPath);
 
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
